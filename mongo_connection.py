@@ -3,7 +3,7 @@ Project: MigrationSourceValidator
 File: mongo_connection.py
 Created: 2018-07-25T14:04:08.539Z
 WrittenBy: anwalsh
-Last Modified: 
+Last Modified: 2018-07-25T20:42:31.305Z
 Revision: 1.0
 Description: Handles connecting to the MongoDB Host and associated fault tolerance.
 """
@@ -11,8 +11,11 @@ from pymongo import MongoClient
 import json
 
 def MakeConnection(c):
-    client = MongoClient(c)
-    namespaces = dict((db, [coll for coll in client[db].collection_names()]) for db in client.database_names() if db not in ('admin', 'local'))
+    return MongoClient(c)
+
+def PullData(c):
+    namespaces = dict((db, [coll for coll in c[db].collection_names()])
+                      for db in c.database_names() if db not in ('admin', 'local'))
 
     print(json.dumps(namespaces, indent = 4))
 
