@@ -12,7 +12,7 @@ import json
 
 def MakeConnection(c):
     client = MongoClient(c)
-    namespaces = dict((db, [coll for coll in client[db].collection_names()]) for db in client.database_names()) 
+    namespaces = dict((db, [coll for coll in client[db].collection_names()]) for db in client.database_names() if db not in ('admin', 'local'))
 
     print(json.dumps(namespaces, indent = 4))
 
