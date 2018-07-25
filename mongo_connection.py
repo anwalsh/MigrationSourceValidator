@@ -7,15 +7,12 @@ Last Modified:
 Revision: 1.0
 Description: Handles connecting to the MongoDB Host and associated fault tolerance.
 """
-from pymongo import *
+from pymongo import MongoClient
+import json
 
 def MakeConnection(c):
-    print("Successfully created the MongoClient object")
-    print(c)
     client = MongoClient(c)
-    print("Make connection...")
-    try:
-        # The ismaster command is cheap and does not require auth.
-        print(client.admin.command('ismaster'))
-    except errors.ConnectionFailure:
-        print("Server not available")
+    namespaces = dict((db, [coll for coll in client[db].collection_names()]) for db in client.database_names()) 
+
+    print(json.dumps(namespaces, indent = 4))
+
