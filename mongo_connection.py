@@ -13,9 +13,10 @@ import json
 def MakeConnection(c):
     return MongoClient(c)
 
-def PullData(c):
+def GetNamespaces(c):
     namespaces = dict((db, [coll for coll in c[db].collection_names()])
                       for db in c.database_names() if db not in ('admin', 'local'))
+
 
     print(json.dumps(namespaces, indent = 4))
 

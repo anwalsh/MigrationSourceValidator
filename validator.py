@@ -15,4 +15,4 @@ parser.add_argument('uri', type=str, help='The source URI connections string')
 
 args = parser.parse_args()
 
-mc.PullData(mc.MakeConnection(args.uri))
+mc.GetNamespaces(mc.MakeConnection(args.uri))
