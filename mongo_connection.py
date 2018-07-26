@@ -7,16 +7,34 @@ Last Modified: 2018-07-25T20:42:31.305Z
 Revision: 1.0
 Description: Handles connecting to the MongoDB Host and associated fault tolerance.
 """
+from pprint import pprint
 from pymongo import MongoClient
-import json
 
 def MakeConnection(c):
     return MongoClient(c)
 
 def GetNamespaces(c):
-    namespaces = dict((db, [coll for coll in c[db].collection_names()])
-                      for db in c.database_names() if db not in ('admin', 'local'))
+    #namespaces = dict((db, [coll for coll in c[db].collection_names()])
+    #                  for db in c.database_names() if db not in ('admin', 'local'))
+    namespaces = dict((db, [collstats for collstats in (st for st in GenGetDBStats(c, db))])
+                        for db in c.database_names() if db not in ('admin', 'local', 'config'))
+    pprint(namespaces, indent = 4)
+
+    #data = c.yelp.command('collstats', 'checkins')
 
 
-    print(json.dumps(namespaces, indent = 4))
+    # pprint(GenGetCollStats(c, 'yelp'), indent = 4)
+    for cstat in GenGetCollStats(c, 'yelp'):
+        pprint(cstat, indent = 4)
+    
+def GenGetDBStats(c, db):
+    yield c[db].command({'dbstats' : 1, "size" : 1024})
 
+def GenGetCollStats(c, db):
+    for coll in c[db].collection_names():
+        data = c.yelp.command('collstats', coll)
+        target = {data.get('ns'): [{'count': data.get('count'), 'size': data.get('size'),
+                                    'avgObjSize': data.get('avgObjSize'), 'capped': data.get('capped'),
+                                    'nindexes': data.get('nindexes'), 'totalIndexSize': data.get('totalIndexSize'),
+                                    'indexSizes': data.get('indexSizes')}]}
+        yield target
