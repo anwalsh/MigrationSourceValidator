@@ -14,7 +14,7 @@ def MakeConnection(c):
     return MongoClient(c)
 
 def GetNamespaces(c):
-    namespaces = dict((db, [coll for coll in GenGetCollStats(c, db)])
+    namespaces = dict((db, [coll for coll in GenGetCollections(c, db)])
                         for db in c.database_names() if db not in ('admin', 'local', 'config'))
 
     pprint(namespaces, indent = 4)
@@ -22,13 +22,13 @@ def GetNamespaces(c):
 def GenGetDBStats(c, db):
     yield c[db].command({'dbstats' : 1, 'scale' : 1024})
 
-def GenGetCollStats(c, db):
+def GenGetCollections(c, db):
     for coll in c[db].collection_names():
         data = c[db].command('collstats', coll, scale=1024)
-        target = {data.get('ns'): [{'count': data.get('count'), 'size': data.get('size'),
+        target = {data.get('ns'): {'count': data.get('count'), 'size': data.get('size'),
                                     'avgObjSize': data.get('avgObjSize'), 'capped': data.get('capped'),
                                     'nindexes': data.get('nindexes'), 'totalIndexSize': data.get('totalIndexSize'),
-                                    'indexSizes': data.get('indexSizes')}, {'Indexes': GetIndexes(c, db, coll)}]}
+                                    'indexSizes': data.get('indexSizes'), 'Indexes': GetIndexes(c, db, coll)}}
         yield target
 
 def GetIndexes(c, db, coll):
