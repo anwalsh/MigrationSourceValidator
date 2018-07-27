@@ -9,14 +9,11 @@ Description: Main handler for the CLI validator workflow.
 """
 import argparse
 import SourceNamespaces as sn
-import mongo_connection as mc
 from pprint import pprint
 
 parser = argparse.ArgumentParser(prog='validator', description = 'Pre-migration validation for the source MongoDB replica set')
 parser.add_argument('uri', type=str, help='The source URI connections string')
 
 args = parser.parse_args()
-client = mc.MakeConnection(args.uri)
-
-s_topology = sn.SourceNamespaces(client)
-s_topology.PrintNamespaces()
+s_topology = sn.SourceNamespaces(args.uri)
+pprint(s_topology.namespaces)
