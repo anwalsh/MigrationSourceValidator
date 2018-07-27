@@ -3,8 +3,8 @@ Project: MigrationSourceValidator
 File: SourceNamespaces.py
 Created: 2018-07-27T19:16:17.492Z
 WrittenBy: anwalsh
-Last Modified: 2018-07-27T21:36:04.952Z
-Revision: 1.0
+Last Modified: 2018-07-27T22:16:02.462Z
+Revision: 3.0
 Description: Class to encapsulate source namespaces and the applicable methods for their population.
 """
 from pprint import pprint
@@ -17,20 +17,20 @@ class SourceNamespaces:
         Create the class object
         """
         self.client = MongoClient(connection_string)
-        self.namespaces = self.GetNamespaces()
+        self.namespaces = self._get_namespaces()
 
-    def GetNamespaces(self):
+    def _get_namespaces(self):
         """Initializes the namespace dictionary with the source namespaces and calls GenGetCollections()
         to add a nested dictionary of specific collstats and index shapes
 
         Arguments:
         self
         """
-        namespaces = dict((db, [coll for coll in self.GenGetCollections(db)])
+        namespaces = dict((db, [coll for coll in self.gen_get_collections(db)])
                            for db in self.client.database_names() if db not in ('admin', 'local', 'config'))
         return namespaces
 
-    def GenGetDBStats(self, db):
+    def gen_get_DBstats(self, db):
         """
         Retrieves the dbstats at KB resolution from the provide MongoDB instance(s)
 
@@ -40,7 +40,7 @@ class SourceNamespaces:
         """
         yield self.client[db].command('dbstats', scale=1024)
 
-    def GenGetCollections(self, db):
+    def gen_get_collections(self, db):
         """
         Generator yields the statistics and index definitions at KB scale from the provided database to be added
         to the namespace dictionary on a per collection basis
@@ -54,10 +54,10 @@ class SourceNamespaces:
             target = {data.get('ns'): {'count': data.get('count'), 'size': data.get('size'),
                                     'avgObjSize': data.get('avgObjSize'), 'capped': data.get('capped'),
                                     'nindexes': data.get('nindexes'), 'totalIndexSize': data.get('totalIndexSize'),
-                                    'indexSizes': data.get('indexSizes'), 'Indexes': self.GetIndexes(db, coll)}}
+                                    'indexSizes': data.get('indexSizes'), 'Indexes': self.get_indexes(db, coll)}}
             yield target
 
-    def GetIndexes(self, db, coll):
+    def get_indexes(self, db, coll):
         """
         Gathers index structure for a particular namespace into a dictionary
 
@@ -68,12 +68,11 @@ class SourceNamespaces:
         """
         return self.client[db][coll].index_information()
 
-    def PrintNamespaces(self):
+    def print_namespaces(self):
         """
         Prints the namespaces dictionary
 
         Arguments:
         self
         """
-        for ns in self.namespaces:
-            pprint(ns, indent=4)
+        pprint(self.namespaces)
