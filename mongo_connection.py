@@ -14,16 +14,10 @@ def MakeConnection(c):
     return MongoClient(c)
 
 def GetNamespaces(c):
-    #namespaces = dict((db, [coll for coll in c[db].collection_names()])
-    #                  for db in c.database_names() if db not in ('admin', 'local'))
-    namespaces = dict((db, [collstats for collstats in (st for st in GenGetDBStats(c, db))])
+    namespaces = dict((db, [coll for coll in GenGetCollStats(c, db)])
                         for db in c.database_names() if db not in ('admin', 'local', 'config'))
     pprint(namespaces, indent = 4)
 
-    #data = c.yelp.command('collstats', 'checkins')
-
-
-    # pprint(GenGetCollStats(c, 'yelp'), indent = 4)
     for cstat in GenGetCollStats(c, 'yelp'):
         pprint(cstat, indent = 4)
     
