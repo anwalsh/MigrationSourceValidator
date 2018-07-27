@@ -7,11 +7,14 @@ Last Modified: 2018-07-27T22:16:02.462Z
 Revision: 3.0
 Description: Class to encapsulate source namespaces and the applicable methods for their population.
 """
+import json
 from pprint import pprint
 from pymongo import MongoClient
 
 class SourceNamespaces:
-
+    """
+    Sourcenamespaces class which takes a URI or SRV Connection string as an argument
+    """
     def __init__(self, connection_string):
         """
         Create the class object
@@ -76,3 +79,10 @@ class SourceNamespaces:
         self
         """
         pprint(self.namespaces)
+
+    def write_json_to_file(self):
+        """
+        Writes the namespaces dictionary to a JSON file within the current working directory
+        """
+        with open('data.json', 'w') as outfile:
+            json.dump(self.namespaces, outfile)
