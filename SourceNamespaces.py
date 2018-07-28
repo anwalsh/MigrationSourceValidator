@@ -1,7 +1,7 @@
 """
 Project: MigrationSourceValidator
 File: SourceNamespaces.py
-Created: 2018-07-27T19:16:17.492Z
+Created: 2018-07-19T19:16:17.492Z
 WrittenBy: anwalsh
 Last Modified: 2018-07-27T22:16:02.462Z
 Revision: 3.0
@@ -13,7 +13,7 @@ from pymongo import MongoClient
 
 class SourceNamespaces:
     """
-    Sourcenamespaces class which takes a URI or SRV Connection string as an argument
+    SourceNamespaces class which takes a URI or SRV Connection string as an argument
     """
     def __init__(self, connection_string):
         """
@@ -57,7 +57,7 @@ class SourceNamespaces:
             target = {data.get('ns'): {'count': data.get('count'), 'size': data.get('size'),
                                     'avgObjSize': data.get('avgObjSize'), 'capped': data.get('capped'),
                                     'nindexes': data.get('nindexes'), 'totalIndexSize': data.get('totalIndexSize'),
-                                    'indexSizes': data.get('indexSizes'), 'Indexes': self.get_indexes(db, coll)}}
+                                    'indexSizes': data.get('indexSizes'), 'indexes': self.get_indexes(db, coll)}}
             yield target
 
     def get_indexes(self, db, coll):
