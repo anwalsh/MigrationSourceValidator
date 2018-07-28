@@ -84,5 +84,5 @@ class SourceNamespaces:
         """
         Writes the namespaces dictionary to a JSON file within the current working directory
         """
-        with open('data.json', 'w') as outfile:
+        with open('output.json', 'w') as outfile:
             json.dump(self.namespaces, outfile)
