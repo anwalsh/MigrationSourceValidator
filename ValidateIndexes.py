@@ -9,10 +9,12 @@ Description: Class to validate the source indexes are in compliance with MongoDB
 """
 from pprint import pprint
 
+
 class ValidateIndexes:
     """
 
     """
+
     def __init__(self, namespace_topology):
         """
         Create the ValidateIndexes class object
@@ -24,7 +26,8 @@ class ValidateIndexes:
         """
         Handler for index validation
         """
-        to_validate = dict(index for index in self._get_indicies_from_payload())
+        to_validate = dict(
+            index for index in self._get_indicies_from_payload())
         return to_validate
         # return self._is_index_value_valid(to_validate)
 
@@ -46,7 +49,6 @@ class ValidateIndexes:
         indicies - a dictionary of the indicies from the source replica set
         """
 
-
     def _is_index_options_valid(self, indicies):
         """
         Validate the options specified in the index:
@@ -65,7 +67,6 @@ class ValidateIndexes:
         indicies - a dictionary of the indicies from the source replica set
         """
 
-
     def print_invalid_indexes(self):
         """
 
@@ -76,4 +77,3 @@ class ValidateIndexes:
         # for key, value in self.s_namespaces.items():
         #     for index in value['indexes'].items():
         #         pprint(index)
-
