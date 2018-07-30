@@ -11,10 +11,12 @@ import json
 from pprint import pprint
 from pymongo import MongoClient
 
+
 class SourceNamespaces:
     """
     SourceNamespaces class which takes a URI or SRV Connection string as an argument
     """
+
     def __init__(self, connection_string):
         """
         Create the class object
@@ -59,10 +61,18 @@ class SourceNamespaces:
         """
         for coll in self.client[db].collection_names():
             data = self.client[db].command('collstats', coll, scale=1024)
-            target = {data.get('ns'): {'count': data.get('count'), 'size': data.get('size'),
-                                    'avgObjSize': data.get('avgObjSize'), 'capped': data.get('capped'),
-                                    'nindexes': data.get('nindexes'), 'totalIndexSize': data.get('totalIndexSize'),
-                                    'indexSizes': data.get('indexSizes'), 'indexes': self.get_indexes(db, coll)}}
+            target = {
+                data.get('ns'): {
+                    'count': data.get('count'),
+                    'size': data.get('size'),
+                    'avgObjSize': data.get('avgObjSize'),
+                    'capped': data.get('capped'),
+                    'nindexes': data.get('nindexes'),
+                    'totalIndexSize': data.get('totalIndexSize'),
+                    'indexSizes': data.get('indexSizes'),
+                    'indexes': self.get_indexes(db, coll)
+                }
+            }
             yield target
 
     def get_indexes(self, db, coll):

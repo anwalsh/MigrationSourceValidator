@@ -11,9 +11,12 @@ import argparse
 import SourceNamespaces as sn
 import ValidateIndexes as vi
 
-parser = argparse.ArgumentParser(prog='validator', description = 'Pre-migration validation for the source MongoDB replica set')
+parser = argparse.ArgumentParser(
+    prog='validator',
+    description='Pre-migration validation for the source MongoDB replica set')
 parser.add_argument('uri', type=str, help='The source URI connections string')
-parser.add_argument('--filetype', '-f', help='Desired output type: stdout(default), JSON')
+parser.add_argument(
+    '--filetype', '-f', help='Desired output type: stdout(default), JSON')
 
 args = parser.parse_args()
 s_topology = sn.SourceNamespaces(args.uri)
