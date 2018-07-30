@@ -3,7 +3,7 @@ Project: MigrationSourceValidator
 File: SourceNamespaces.py
 Created: 2018-07-19T19:16:17.492Z
 WrittenBy: anwalsh
-Last Modified: 2018-07-27T22:16:02.462Z
+Last Modified: 2018-07-30T 2:41:20.167Z
 Revision: 3.0
 Description: Class to encapsulate source namespaces and the applicable methods for their population.
 """
@@ -29,8 +29,13 @@ class SourceNamespaces:
         Arguments:
         self
         """
-        namespaces = dict((db, [coll for coll in self.gen_get_collections(db)])
-                           for db in self.client.database_names() if db not in ('admin', 'local', 'config'))
+        # namespaces = dict((db, [coll for coll in self.gen_get_collections(db)])
+        #                    for db in self.client.database_names() if db not in ('admin', 'local', 'config'))
+        namespaces = {}
+        for db in self.client.database_names():
+            if db not in ('admin', 'local', 'config'):
+                for coll in self.gen_get_collections(db):
+                    namespaces.update(coll)
         return namespaces
 
     def gen_get_DBstats(self, db):
