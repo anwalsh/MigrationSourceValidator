@@ -12,7 +12,7 @@ from pprint import pprint
 
 class ValidateIndexes:
     """
-
+    Class to validate indexes meet the 3.4 stricter index validation
     """
 
     def __init__(self, namespace_topology):
@@ -69,7 +69,7 @@ class ValidateIndexes:
 
     def print_invalid_indexes(self):
         """
-
+        Prints the invalid indexes post validation
         """
         pprint(self.validated_indexes)
         # pprint(self.s_namespaces)
