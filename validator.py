@@ -3,7 +3,7 @@ Project: MigrationSourceValidator
 File: validator.py
 Created: 2018-07-19T13:46:38.214Z
 WrittenBy: anwalsh
-Last Modified: 2018-07-27T22:15:39.361Z
+Last Modified: 2018-07-31T19:11:54.699Z
 Revision: 2.0
 Description: Main handler for the CLI validator workflow.
 """
@@ -25,5 +25,4 @@ top = vi.ValidateIndexes(s_topology.namespaces)
 if args.filetype == 'json':
     s_topology.write_json_to_file()
 else:
-    top.print_invalid_indexes()
-    # s_topology.print_namespaces()
+    top.print_validated_indexes()
