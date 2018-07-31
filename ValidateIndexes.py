@@ -27,18 +27,18 @@ class ValidateIndexes:
         Handler for index validation
         """
         to_validate = dict(
-            index for index in self._get_indicies_from_payload())
+            index for index in self._get_indices_from_payload())
         return to_validate
         # return self._is_index_value_valid(to_validate)
 
-    def _get_indicies_from_payload(self):
+    def _get_indices_from_payload(self):
         """
         """
         for key, value in self.s_namespaces.items():
             for index in value['indexes'].items():
                 yield index
 
-    def _is_index_value_valid(self, indicies):
+    def _is_index_value_valid(self, indices):
         """
         Validate that the index value is:
         - A number greater than 0
@@ -46,10 +46,10 @@ class ValidateIndexes:
         - An index is of a special type and the value specified is "text", "2d", or "hashed"
 
         Arguments:
-        indicies - a dictionary of the indicies from the source replica set
+        indices - a dictionary of the indices from the source replica set
         """
 
-    def _is_index_options_valid(self, indicies):
+    def _is_index_options_valid(self, indices):
         """
         Validate the options specified in the index:
         - TTL indexes must be single-field indexes with "expireAfteSeconds" defined
@@ -64,7 +64,7 @@ class ValidateIndexes:
         - sparse : true option
 
         Arguments:
-        indicies - a dictionary of the indicies from the source replica set
+        indices - a dictionary of the indices from the source replica set
         """
 
     def print_invalid_indexes(self):
