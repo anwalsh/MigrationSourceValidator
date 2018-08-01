@@ -3,8 +3,8 @@ Project: MigrationSourceValidator
 File: ValidateIndexes.py
 Created: 2018-07-20T 1:34:49.211Z
 WrittenBy: anwalsh
-Last Modified: 2018-07-31T19:12:06.203Z
-Revision: 1.0
+Last Modified: 2018-08-01T20:22:40.180Z
+Revision: 2.0
 Description: Class to validate the source indexes are in compliance with MongoDB 3.4 Stricter Index Validation: https://docs.mongodb.com/manual/release-notes/3.4-compatibility/#stricter-validation-of-collection-and-index-specifications
 """
 from pprint import pprint
@@ -27,8 +27,10 @@ class ValidateIndexes:
         Handler for index validation
         """
         to_validate = dict(index for index in self._get_indices_from_payload())
-        validated_index_payload = self._is_index_value_valid(to_validate)
-        return validated_index_payload
+        validated_index_value_payload = self._is_index_value_valid(to_validate)
+        validated_index_options_payoad = self._is_index_options_valid(
+            to_validate)
+        return validated_index_value_payload
         # return self._is_index_value_valid(to_validate)
 
     def _get_indices_from_payload(self):
@@ -83,6 +85,8 @@ class ValidateIndexes:
         Arguments:
         indices - a dictionary of the indices from the source replica set
         """
+        options_validity_outcome = {}
+        pprint(indices)
 
     def print_validated_indexes(self):
         """
