@@ -26,9 +26,10 @@ class ValidateIndexes:
         """
         Handler for index validation
         """
+        # TODO: If index is v2+ ignore it
         to_validate = dict(index for index in self._get_indices_from_payload())
         validated_index_value_payload = self._is_index_value_valid(to_validate)
-        validated_index_options_payoad = self._is_index_options_valid(
+        validated_index_options_payload = self._is_index_options_valid(
             to_validate)
         return validated_index_value_payload
         # return self._is_index_value_valid(to_validate)
@@ -71,7 +72,7 @@ class ValidateIndexes:
     def _is_index_options_valid(self, indices):
         """
         Validate the options specified in the index:
-        - TTL indexes must be single-field indexes with "expireAfteSeconds" defined
+        - TTL indexes must be single-field indexes with "expireAfterSeconds" defined
         - unique : true
         - partialFilterExpression defined with:
             - equality expressions
@@ -86,7 +87,11 @@ class ValidateIndexes:
         indices - a dictionary of the indices from the source replica set
         """
         options_validity_outcome = {}
-        pprint(indices)
+        for index_name, index_def in indices.items():
+            options_validity_outcome.update({index_name: ""})
+            pprint(index_def)
+            # TODO: Validate background or foreground metadata.
+            # TODO: For n index type validate that the options meet our specifications
 
     def print_validated_indexes(self):
         """
