@@ -41,6 +41,7 @@ class ValidateIndexes:
 
     def _get_indices_from_payload(self):
         """
+        Get the indices from the SourceNamespaces s_namespace object
         """
         for _, value in self.s_namespaces.items():
             for index in value['indexes'].items():
@@ -68,14 +69,13 @@ class ValidateIndexes:
                         valid = True 
                     else:
                         valid = False
+                        return valid
                 else:
                     valid = False
+                    return valid
             else:
                 return "Special"
-        if valid == True:
-            return True
-        else:
-            return False
+        return valid
 
 
     def _index_build(self, index_def):
@@ -86,14 +86,13 @@ class ValidateIndexes:
         index_def - a dictionary contianing the index definitions from the source for validation
         """
         for index_data in index_def['key']:
-            if index_data[0] == '_id' and len(index_data) == 2:
+            if index_data[0] == '_id' and len(index_def['key']) == 1:
                 return 'Default Index'
             else:
                 if index_def.get('background') == True:
                     return 'Background'
                 else:
                     return 'Foreground'
-        return None
 
     def _is_index_options_valid(self, index_def):
         """
@@ -112,15 +111,18 @@ class ValidateIndexes:
         Arguments:
         index_def - a dictionary containing the index definitions from the source for option validation
         """
-        # pprint(index_def)
+        valid_option = True
+        options = {'background', 'ns', 'v', 'key'}
+        for index_option in index_def.keys():
+            if index_option not in options:
+                valid_option = False
+                return valid_option
+            else:
+                valid_option = True
+        return valid_option
 
     def print_validated_indexes(self):
         """
         Prints the invalid indexes post validation
         """
         pprint(self.validated_indexes)
-        # pprint(self.s_namespaces)
-
-        # for key, value in self.s_namespaces.items():
-        #     for index in value['indexes'].items():
-        #         pprint(index)
