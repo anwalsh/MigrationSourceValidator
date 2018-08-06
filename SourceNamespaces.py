@@ -31,8 +31,6 @@ class SourceNamespaces:
         Arguments:
         self
         """
-        # namespaces = dict((db, [coll for coll in self.gen_get_collections(db)])
-        #                    for db in self.client.database_names() if db not in ('admin', 'local', 'config'))
         namespaces = {}
         for db in self.client.database_names():
             if db not in ('admin', 'local', 'config'):

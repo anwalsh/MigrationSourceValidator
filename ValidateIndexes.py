@@ -3,7 +3,7 @@ Project: MigrationSourceValidator
 File: ValidateIndexes.py
 Created: 2018-07-20T 1:34:49.211Z
 WrittenBy: anwalsh
-Last Modified: 2018-08-01T20:22:40.180Z
+Last Modified: 2018-08-05 T21:26:06.526  
 Revision: 2.0
 Description: Class to validate the source indexes are in compliance with MongoDB 3.4 Stricter Index Validation: https://docs.mongodb.com/manual/release-notes/3.4-compatibility/#stricter-validation-of-collection-and-index-specifications
 """
@@ -26,13 +26,18 @@ class ValidateIndexes:
         """
         Handler for index validation
         """
-        # TODO: If index is v2+ ignore it
-        to_validate = dict(index for index in self._get_indices_from_payload())
-        validated_index_value_payload = self._is_index_value_valid(to_validate)
-        validated_index_options_payload = self._is_index_options_valid(
-            to_validate)
-        return validated_index_value_payload
-        # return self._is_index_value_valid(to_validate)
+        indices = dict(index for index in self._get_indices_from_payload())
+        validated_indices = {}
+
+        for index_name, index_def in indices.items():
+            validated_indices.update({
+                index_name: {
+                    'valueValid': self._is_index_value_valid(index_def),
+                    'optionsValid': self._is_index_options_valid(index_def)
+                }
+            })
+
+        return validated_indices
 
     def _get_indices_from_payload(self):
         """
@@ -41,7 +46,7 @@ class ValidateIndexes:
             for index in value['indexes'].items():
                 yield index
 
-    def _is_index_value_valid(self, indices):
+    def _is_index_value_valid(self, index_def):
         """
         Validate that the index value is:
         - A number greater than 0
@@ -49,27 +54,22 @@ class ValidateIndexes:
         - An index is of a special type and the value specified is "text", "2d", or "hashed"
 
         Arguments:
-        indices - a dictionary of the indices from the source replica set
+        index_def - dictionary containing the index definitions from source for value validation
         """
         special_case = ['text', '2dsphere', 'hashed']
-        validity_outcome = {}
-
-        for index_name, index_def in indices.items():
-            validity_outcome.update({index_name: ""})
-            # Iterate through index key definitions as a tuples
-            for index_data in index_def['key']:
-                index_value = index_data[1]
-                if index_value not in special_case:
-                    if index_value > 0 or index_value < 0:
-                        validity_outcome[index_name] = "Valid"
-                    else:
-                        validity_outcome[index_name] = "Invalid"
+        for index_data in index_def.get('key'):
+            index_value = index_data[1]
+            if index_value not in special_case:
+                if index_value > 0 or index_value < 0:
+                    return "Valid"
                 else:
-                    validity_outcome[index_name] = "Special"
+                    return "Invalid"
+            elif index_value == None:
+                return None
+            else:
+                return "Special"
 
-        return validity_outcome
-
-    def _is_index_options_valid(self, indices):
+    def _is_index_options_valid(self, index_def):
         """
         Validate the options specified in the index:
         - TTL indexes must be single-field indexes with "expireAfterSeconds" defined
@@ -86,12 +86,7 @@ class ValidateIndexes:
         Arguments:
         indices - a dictionary of the indices from the source replica set
         """
-        options_validity_outcome = {}
-        for index_name, index_def in indices.items():
-            options_validity_outcome.update({index_name: ""})
-            pprint(index_def)
-            # TODO: Validate background or foreground metadata.
-            # TODO: For n index type validate that the options meet our specifications
+        # pprint(index_def)
 
     def print_validated_indexes(self):
         """
