@@ -60,7 +60,7 @@ class ValidateIndexes:
         for index_data in index_def.get('key'):
             index_value = index_data[1]
             if index_value not in special_case:
-                if index_value > 0 or index_value < 0:
+                if type(index_value) == int:
                     return "Valid"
                 else:
                     return "Invalid"
