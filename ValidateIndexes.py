@@ -33,10 +33,10 @@ class ValidateIndexes:
             validated_indices.update({
                 index_name: {
                     'valueValid': self._is_index_value_valid(index_def),
-                    'optionsValid': self._is_index_options_valid(index_def)
+                    'optionsValid': self._is_index_options_valid(index_def),
+                    'buildType': self._index_build(index_def),
                 }
             })
-
         return validated_indices
 
     def _get_indices_from_payload(self):
@@ -54,20 +54,46 @@ class ValidateIndexes:
         - An index is of a special type and the value specified is "text", "2d", or "hashed"
 
         Arguments:
-        index_def - dictionary containing the index definitions from source for value validation
+        index_def - dictionary containing the index definitions from the source for value validation
         """
         special_case = ['text', '2dsphere', 'hashed']
-        for index_data in index_def.get('key'):
+        valid = True
+
+        for index_data in index_def['key']:
+            index_key = index_data[0]
             index_value = index_data[1]
             if index_value not in special_case:
-                if type(index_value) == int:
-                    return "Valid"
+                if 1024 > len(str.encode(index_key)):
+                    if type(index_value) == float or type(index_value) == int:
+                        valid = True 
+                    else:
+                        valid = False
                 else:
-                    return "Invalid"
-            elif index_value == None:
-                return None
+                    valid = False
             else:
                 return "Special"
+        if valid == True:
+            return True
+        else:
+            return False
+
+
+    def _index_build(self, index_def):
+        """
+        Validate the index definition will build in the foreground or the background
+
+        Arguments:
+        index_def - a dictionary contianing the index definitions from the source for validation
+        """
+        for index_data in index_def['key']:
+            if index_data[0] == '_id' and len(index_data) == 2:
+                return 'Default Index'
+            else:
+                if index_def.get('background') == True:
+                    return 'Background'
+                else:
+                    return 'Foreground'
+        return None
 
     def _is_index_options_valid(self, index_def):
         """
@@ -84,7 +110,7 @@ class ValidateIndexes:
         - sparse : true option
 
         Arguments:
-        indices - a dictionary of the indices from the source replica set
+        index_def - a dictionary containing the index definitions from the source for option validation
         """
         # pprint(index_def)
 
