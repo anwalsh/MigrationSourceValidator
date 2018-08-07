@@ -54,10 +54,13 @@ class ValidateIndexes:
         - A number less than 0
         - An index is of a special type and the value specified is "text", "2d", or "hashed"
 
+        Validate that the key is:
+        - Less than 1024 bytes ref: https://docs.mongodb.com/manual/reference/limits/#Index-Key-Limit
+
         Arguments:
         index_def - dictionary containing the index definitions from the source for value validation
         """
-        special_case = ['text', '2dsphere', 'hashed']
+        special_case = ['text', '2dsphere', 'hashed', '2d']
         valid = True
 
         for index_data in index_def['key']:
@@ -73,8 +76,10 @@ class ValidateIndexes:
                 else:
                     valid = False
                     return valid
+            elif index_value in special_case:
+                return index_value
             else:
-                return "Special"
+                return "Not Validated"
         return valid
 
 
@@ -112,13 +117,18 @@ class ValidateIndexes:
         index_def - a dictionary containing the index definitions from the source for option validation
         """
         valid_option = True
-        options = {'background', 'ns', 'v', 'key'}
-        for index_option in index_def.keys():
-            if index_option not in options:
+        options = {'background', 'ns', 'v', 'key', 'unique', '2dsphereIndexVersion', 'sparse', 'unique', 'partialFilterExpression', 'collation', 'expireAfterSeconds'}
+        if index_def.get('expiresAfterSeconds') != None:
+            if len(index_def['key']) > 1:
                 valid_option = False
                 return valid_option
-            else:
-                valid_option = True
+        else:
+            for index_option in index_def.keys():
+                if index_option not in options:
+                    valid_option = False
+                    return valid_option
+                else:
+                    valid_option = True
         return valid_option
 
     def print_validated_indexes(self):
