@@ -1,12 +1,3 @@
-"""
-Project: MigrationSourceValidator
-File: ValidateIndexes.py
-Created: 2018-07-20T 1:34:49.211Z
-WrittenBy: anwalsh
-Last Modified: 2018-08-05 T21:26:06.526  
-Revision: 2.0
-Description: Class to validate the source indexes are in compliance with MongoDB 3.4 Stricter Index Validation: https://docs.mongodb.com/manual/release-notes/3.4-compatibility/#stricter-validation-of-collection-and-index-specifications
-"""
 from pprint import pprint
 
 
@@ -69,7 +60,7 @@ class ValidateIndexes:
             if index_value not in special_case:
                 if 1024 > len(str.encode(index_key)):
                     if type(index_value) == float or type(index_value) == int:
-                        valid = True 
+                        valid = True
                     else:
                         valid = False
                         return valid
@@ -81,7 +72,6 @@ class ValidateIndexes:
             else:
                 return "Not Validated"
         return valid
-
 
     def _index_build(self, index_def):
         """
@@ -117,7 +107,11 @@ class ValidateIndexes:
         index_def - a dictionary containing the index definitions from the source for option validation
         """
         valid_option = True
-        options = {'background', 'ns', 'v', 'key', 'unique', '2dsphereIndexVersion', 'sparse', 'unique', 'partialFilterExpression', 'collation', 'expireAfterSeconds'}
+        options = {
+            'background', 'ns', 'v', 'key', 'unique', '2dsphereIndexVersion',
+            'sparse', 'unique', 'partialFilterExpression', 'collation',
+            'expireAfterSeconds'
+        }
         if index_def.get('expiresAfterSeconds') != None:
             if len(index_def['key']) > 1:
                 valid_option = False
