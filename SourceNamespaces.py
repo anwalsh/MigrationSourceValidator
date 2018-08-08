@@ -1,14 +1,6 @@
-"""
-Project: MigrationSourceValidator
-File: SourceNamespaces.py
-Created: 2018-07-19T19:16:17.492Z
-WrittenBy: anwalsh
-Last Modified: 2018-07-30T 2:41:20.167Z
-Revision: 3.0
-Description: Class to encapsulate source namespaces and the applicable methods for their population.
-"""
 import json
 from pprint import pprint
+
 from pymongo import MongoClient
 
 
