@@ -1,4 +1,7 @@
+import sys
 from pprint import pprint
+
+import bson
 
 
 class ValidateIndexes:
@@ -57,8 +60,9 @@ class ValidateIndexes:
         for index_data in index_def['key']:
             index_key = index_data[0]
             index_value = index_data[1]
+            index = {index_key: index_value}
             if index_value not in special_case:
-                if 1024 > len(str.encode(index_key)):
+                if 1024 > sys.getsizeof(bson.BSON.encode(index)):
                     if type(index_value) == float or type(index_value) == int:
                         valid = True
                     else:
