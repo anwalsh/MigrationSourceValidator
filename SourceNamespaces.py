@@ -84,10 +84,3 @@ class SourceNamespaces:
         self
         """
         pprint(self.namespaces)
-
-    def write_json_to_file(self):
-        """
-        Writes the namespaces dictionary to a JSON file within the current working directory
-        """
-        with open('output.json', 'w') as outfile:
-            json.dump(self.namespaces, outfile)
